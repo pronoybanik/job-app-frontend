@@ -15,7 +15,7 @@ const Jobs = () => {
     
     console.log("jobs", jobs?.data?.length);
     // length
-  return <div>Jobs page {jobs?.data?.lengthF}</div>;
+  return <div>Jobs page {jobs?.data?.length}</div>;
 };
 
 export default Jobs;
