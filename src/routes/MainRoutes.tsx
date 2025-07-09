@@ -11,7 +11,6 @@ const MainRoutes = createBrowserRouter([
     element: <App />,
     children: routeGenerator(NavbarPath),
   },
-
   {
     path: "/login",
     element: <Login />,
