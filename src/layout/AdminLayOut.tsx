@@ -1,9 +1,10 @@
 import { Outlet } from "react-router-dom";
+import AdminDashBoard from "../shared/AdminDashBoard";
 
 const AdminLayOut = () => {
   return (
     <div>
-      admin layout navbar
+      <AdminDashBoard />
       <Outlet />
     </div>
   );
