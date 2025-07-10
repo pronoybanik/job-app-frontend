@@ -14,7 +14,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="col-span-1 lg:col-span-2">
-            <h3 className="text-2xl font-bold text-white mb-4">JobPortal</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">JobVerse</h3>
             <p className="text-gray-300 mb-6 max-w-md">
               Connecting talented professionals with amazing opportunities. Your
               career journey starts here.
@@ -145,7 +145,7 @@ const Footer = () => {
             <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-gray-300">
               <div className="flex items-center">
                 <Mail className="w-4 h-4 mr-2" />
-                contact@jobportal.com
+                contact@JobVerse.com
               </div>
               <div className="flex items-center">
                 <Phone className="w-4 h-4 mr-2" />
@@ -164,7 +164,7 @@ const Footer = () => {
               <a href="#" className="hover:text-white transition-colors">
                 Terms of Service
               </a>
-              <span>&copy; 2024 JobPortal. All rights reserved.</span>
+              <span>&copy; 2024 JobVerse. All rights reserved.</span>
             </div>
           </div>
         </div>

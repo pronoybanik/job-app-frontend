@@ -12,3 +12,8 @@ export type TUserPath = {
   children?: TUserPath[];
 };
 
+export type TSidebarItem = {
+  key?: string;
+  label: ReactNode;
+  children?: TSidebarItem[];
+} | undefined;
