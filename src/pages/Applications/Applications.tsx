@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hook";
 import { getAllApplicationsThunk } from "../../redux/features/apply/apply.slice";
 import {
@@ -14,7 +14,9 @@ import type { IJobApplication } from "../../types/apply.type";
 
 const Applications = () => {
   const dispatch = useAppDispatch();
-  const { applications, loading, error } = useAppSelector((state) => state.apply);
+  const { applications, loading, error } = useAppSelector(
+    (state) => state.apply
+  );
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
@@ -61,14 +63,20 @@ const Applications = () => {
     }
   };
 
-  const filteredApplications = ((applications as unknown) as IJobApplication[])?.filter((app) => {
+  const filteredApplications = (
+    applications as unknown as IJobApplication[]
+  )?.filter((app) => {
     const matchesSearch =
-      app.jobId?.companyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.jobId?.companyName
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       app.jobId?.position?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.userId?.fullName?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = filterStatus === "" || app.userId?.status === filterStatus;
-    const matchesContract = filterContract === "" || app.jobId?.contractType === filterContract;
+    const matchesStatus =
+      filterStatus === "" || app.userId?.status === filterStatus;
+    const matchesContract =
+      filterContract === "" || app.jobId?.contractType === filterContract;
 
     return matchesSearch && matchesStatus && matchesContract;
   });
@@ -84,7 +92,9 @@ const Applications = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto mt-12">
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <h1 className="text-2xl font-semibold text-gray-800">Job Applications</h1>
+        <h1 className="text-2xl font-semibold text-gray-800">
+          Job Applications
+        </h1>
         <div className="flex gap-2">
           <input
             type="text"
@@ -129,7 +139,9 @@ const Applications = () => {
               className="border border-gray-200 rounded-lg p-5 shadow-sm bg-white"
             >
               <div className="mb-3">
-                <h2 className="text-lg font-semibold">{application.jobId.position}</h2>
+                <h2 className="text-lg font-semibold">
+                  {application.jobId.position}
+                </h2>
                 <p className="text-sm text-gray-600 flex items-center">
                   <Building2 className="w-4 h-4 mr-1" />
                   {application.jobId.companyName}
@@ -156,10 +168,18 @@ const Applications = () => {
               </div>
 
               <div className="mt-4 flex justify-between items-center text-xs">
-                <span className={`px-2 py-1 rounded-full ${getStatusColor(application.userId.status)}`}>
+                <span
+                  className={`px-2 py-1 rounded-full ${getStatusColor(
+                    application.userId.status
+                  )}`}
+                >
                   {application.userId.status}
                 </span>
-                <span className={`px-2 py-1 rounded-full ${getContractColor(application.jobId.contractType)}`}>
+                <span
+                  className={`px-2 py-1 rounded-full ${getContractColor(
+                    application.jobId.contractType
+                  )}`}
+                >
                   {application.jobId.contractType}
                 </span>
               </div>
@@ -188,15 +208,29 @@ const Applications = () => {
           <div className="bg-white rounded-lg p-6 max-w-xl w-full">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">Application Details</h2>
-              <button onClick={() => setSelectedApp(null)} className="text-gray-500 hover:text-gray-800">
+              <button
+                onClick={() => setSelectedApp(null)}
+                className="text-gray-500 hover:text-gray-800"
+              >
                 ✖
               </button>
             </div>
-            <p><strong>Position:</strong> {selectedApp.jobId.position}</p>
-            <p><strong>Company:</strong> {selectedApp.jobId.companyName}</p>
-            <p><strong>Applicant:</strong> {selectedApp.userId.fullName} ({selectedApp.userId.email})</p>
-            <p><strong>Status:</strong> {selectedApp.userId.status}</p>
-            <p><strong>Applied:</strong> {formatDate(selectedApp.appliedAt)}</p>
+            <p>
+              <strong>Position:</strong> {selectedApp.jobId.position}
+            </p>
+            <p>
+              <strong>Company:</strong> {selectedApp.jobId.companyName}
+            </p>
+            <p>
+              <strong>Applicant:</strong> {selectedApp.userId.fullName} (
+              {selectedApp.userId.email})
+            </p>
+            <p>
+              <strong>Status:</strong> {selectedApp.userId.status}
+            </p>
+            <p>
+              <strong>Applied:</strong> {formatDate(selectedApp.appliedAt)}
+            </p>
           </div>
         </div>
       )}
