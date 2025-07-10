@@ -1,10 +1,24 @@
 import type { TJobPosting } from "../../../types/job.type";
 import axiosInstance from "../../../utils/axios";
+import type { TJobFilters } from "./job.slice";
 
-export const getJobs = async () => {
-  const response = await axiosInstance.get("/job");
+export const getJobs = async (filters: TJobFilters = {}) => {
+  const { searchTerm, location, contractType, limit } = filters;
+
+  const response = await axiosInstance.get("/job", {
+    params: {
+      ...(searchTerm && { searchTerm }),
+      ...(location && { location }),
+      ...(contractType && { contractType }),
+      ...(limit && { limit }),
+    },
+  });
+
   return response.data;
 };
+
+
+
 
 export const postJobs = async (data: TJobPosting) => {
   const response = await axiosInstance.post("/job/create-job", data);

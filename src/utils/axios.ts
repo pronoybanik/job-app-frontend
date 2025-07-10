@@ -1,8 +1,18 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:5000/api/v1',
-  });
+  baseURL: 'http://localhost:5000/api/v1',
+});
 
-  export default axiosInstance;
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      config.headers.Authorization = `${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
+export default axiosInstance;

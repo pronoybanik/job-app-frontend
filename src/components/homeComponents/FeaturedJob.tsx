@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { MapPin, Clock, DollarSign, Building } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../redux/hook";
 import { fetchJobs } from "../../redux/features/job/job.slice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const FeaturedJobs = () => {
   const dispatch = useAppDispatch();
@@ -11,7 +11,11 @@ const FeaturedJobs = () => {
   const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(fetchJobs());
+    dispatch(
+      fetchJobs({
+        limit: 6,
+      })
+    );
   }, [dispatch]);
 
   if (loading) {
@@ -113,9 +117,12 @@ const FeaturedJobs = () => {
         </div>
 
         <div className="text-center mt-12">
-          <button className="px-8 py-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          <Link
+            to="/jobs"
+            className="px-8 py-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
             View All Jobs
-          </button>
+          </Link>
         </div>
       </div>
     </section>

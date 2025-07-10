@@ -31,7 +31,6 @@ const CreateJob = () => {
     try {
       const result = await dispatch(createJobs(formData)).unwrap();
 
-      console.log(result);
       if (result.success) {
         toast.success(result.message);
         setFormData({

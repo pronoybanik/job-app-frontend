@@ -85,12 +85,14 @@ const JobList = () => {
                   >
                     Edit
                   </Link>
-                  <button
-                    onClick={() => handleDelete(job._id)}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    Delete
-                  </button>
+                  {job._id && (
+                    <button
+                      onClick={() => handleDelete(job._id!)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      Delete
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

@@ -24,15 +24,17 @@ const LoginForm: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<TUser> = async (data) => {
+    setIsSubmitting(true);
     const result = await dispatch(loginUserThunk(data));
     const resultAction = result.payload;
-    console.log("login", resultAction);
+    
 
     if (resultAction.success) {
       const user = verifyToken(resultAction.data.accessToken) as TUser;
       dispatch(setUser({ user, token: resultAction.data.accessToken }));
       localStorage.setItem("accessToken", resultAction.data.accessToken);
       reset();
+      setIsSubmitting(false);
       // toast.success("Logged in successfully", { id: toastId });
       toast.success("Logged in successfully");
       navigate(`/`);
