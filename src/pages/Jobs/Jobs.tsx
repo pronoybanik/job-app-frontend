@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../redux/hook";
 import { fetchJobs } from "../../redux/features/job/job.slice";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { createApplicationThunk } from "../../redux/features/apply/apply.slice";
 
 const JobSearchPage = () => {
   const locations = [
@@ -23,9 +26,10 @@ const JobSearchPage = () => {
   const [selectedContract, setSelectedContract] = useState("");
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
   const [isContractDropdownOpen, setIsContractDropdownOpen] = useState(false);
-
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { jobs, loading, error } = useAppSelector((state) => state.jobs);
+  const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(
@@ -41,6 +45,27 @@ const JobSearchPage = () => {
     setSearchTerm("");
     setSelectedLocation("");
     setSelectedContract("");
+  };
+
+  const handleApply = async (jobPostId: string) => {
+    try {
+      const resultAction = await dispatch(
+        createApplicationThunk({
+          jobId: jobPostId,
+          userId: user?.userId || "",
+        })
+      );
+
+      const data = resultAction;
+      if (data.payload) {
+        toast.success("Application submitted successfully!");
+        setTimeout(() => {
+          navigate("/applications");
+        }, 1000);
+      }
+    } catch (error) {
+      console.error("Application failed:", error);
+    }
   };
 
   if (error) {
@@ -256,7 +281,10 @@ const JobSearchPage = () => {
                 {/* <p className="text-gray-700 mb-4">{job.description}</p> */}
 
                 <div className="flex gap-3">
-                  <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                  <button
+                    onClick={() => handleApply(`${job._id}`)}
+                    className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                  >
                     Apply Now
                   </button>
                   <button className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors duration-200">

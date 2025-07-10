@@ -3,6 +3,8 @@ import { MapPin, Clock, DollarSign, Building } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../redux/hook";
 import { fetchJobs } from "../../redux/features/job/job.slice";
 import { Link, useNavigate } from "react-router-dom";
+import { createApplicationThunk } from "../../redux/features/apply/apply.slice";
+import { toast } from "sonner";
 
 const FeaturedJobs = () => {
   const dispatch = useAppDispatch();
@@ -17,6 +19,27 @@ const FeaturedJobs = () => {
       })
     );
   }, [dispatch]);
+
+  const handleApply = async (jobPostId: string) => {
+    try {
+      const resultAction = await dispatch(
+        createApplicationThunk({
+          jobId: jobPostId,
+          userId: user?.userId || "",
+        })
+      );
+
+      const data = resultAction;
+      if (data.payload) {
+        toast.success("Application submitted successfully!");
+        setTimeout(() => {
+          navigate("/applications");
+        }, 1000);
+      }
+    } catch (error) {
+      console.error("Application failed:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -97,7 +120,7 @@ const FeaturedJobs = () => {
 
                   {user ? (
                     <button
-                      onClick={() => navigate(`/jobs/${job._id}`)}
+                      onClick={() => handleApply(`${job._id}`)}
                       className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                       Apply Now

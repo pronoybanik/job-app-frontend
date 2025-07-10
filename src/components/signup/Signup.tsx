@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import type { TUser } from "../../types/user.type";
 import { createUserThunk } from "../../redux/features/auth/auth.slice";
 import { useAppDispatch } from "../../redux/hook";
+import { toast } from "sonner";
 
 const Registration: React.FC = () => {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -26,7 +27,7 @@ const Registration: React.FC = () => {
     const resultAction = result.payload;
 
     if (resultAction.success) {
-      alert(resultAction.message);
+      toast.success(resultAction.message);
       reset();
       setIsSubmitting(false);
       setTimeout(() => {

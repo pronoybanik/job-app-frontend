@@ -4,6 +4,7 @@ import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 import storage from "redux-persist/lib/storage";
 import jobsReducer from "../redux/features/job/job.slice";
 import authReducer from "../redux/features/auth/auth.slice";
+import applyReducer from "../redux/features/apply/apply.slice";
 
 // Persist config for auth
 const authPersistConfig = {
@@ -18,6 +19,7 @@ export const store = configureStore({
   reducer: {
     jobs: jobsReducer,
     auth: persistedAuthReducer,
+    apply: applyReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

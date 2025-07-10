@@ -26,7 +26,6 @@ const DashBoard = () => {
         }
 
         const result = await response.json();
-        console.log("User data:", result);
         setUser(result.data);
       } catch (err: any) {
         setError(err.message || "Failed to fetch user");
