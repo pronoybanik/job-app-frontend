@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
 import type { TAuthState, TAuthUser, TUser } from "../../../types/user.type";
-import { createUser, loginUser } from "./auth.api";
+import { createUser, getCurrentUser, loginUser } from "./auth.api";
 
 // Initial state
 const initialState: TAuthState = {
@@ -17,6 +17,18 @@ export const createUserThunk = createAsyncThunk(
   async (data: TUser, { rejectWithValue }) => {
     try {
       const user = await createUser(data);
+      return user;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const getCurrentUserThunk = createAsyncThunk(
+  "user/getCurrentUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const user = await getCurrentUser();
       return user;
     } catch (error) {
       return rejectWithValue(error);
@@ -52,6 +64,7 @@ const authSlice = createSlice({
       state.token = null;
       state.loading = false;
       state.error = null;
+      localStorage.clear();
     },
   },
   extraReducers: (builder) => {

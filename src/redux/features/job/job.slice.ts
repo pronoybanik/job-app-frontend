@@ -25,11 +25,12 @@ export interface TJobFilters {
 
 export const fetchJobs = createAsyncThunk(
   "jobs/fetchJobs",
-  async (filters: TJobFilters = {}) => {
-    const jobs = await getJobs(filters);
+  async (filters?: TJobFilters | null) => {
+    const jobs = await getJobs(filters || {}); 
     return jobs.data;
   }
 );
+
 
 export const createJobs = createAsyncThunk("jobs/createJobs", async (data: TJobPosting) => {
   const job = await postJobs(data);

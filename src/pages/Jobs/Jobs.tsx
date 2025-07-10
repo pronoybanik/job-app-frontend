@@ -8,7 +8,6 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../redux/hook";
-import { useNavigate } from "react-router-dom";
 import { fetchJobs } from "../../redux/features/job/job.slice";
 
 const JobSearchPage = () => {
@@ -26,7 +25,6 @@ const JobSearchPage = () => {
   const [isContractDropdownOpen, setIsContractDropdownOpen] = useState(false);
 
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const { jobs, loading, error } = useAppSelector((state) => state.jobs);
 
   useEffect(() => {

@@ -6,6 +6,7 @@ import { routeGenerator } from "../utils/RouteGenerator";
 import { NavbarPath } from "./Home.Routes";
 import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
 import { AdminPaths } from "./Admin.Routes";
+import ProtectedRoute from "./ProtectedRoute";
 
 const MainRoutes = createBrowserRouter([
   {
@@ -15,7 +16,11 @@ const MainRoutes = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <AdminDashboard />,
+    element: (
+      <ProtectedRoute roles={["admin"]}>
+        <AdminDashboard />,
+      </ProtectedRoute>
+    ),
     children: routeGenerator(AdminPaths),
   },
   {
