@@ -1,37 +1,39 @@
 import React from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { Eye, EyeOff, User, Mail, Lock } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import type { TUser } from "../../types/user.type";
+import { createUserThunk } from "../../redux/features/auth/auth.slice";
+import { useAppDispatch } from "../../redux/hook";
 
-interface FormData {
-  fullName: string;
-  email: string;
-  password: string;
-}
-
-const RegistrationForm: React.FC = () => {
+const Registration: React.FC = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<FormData>({
+  } = useForm<TUser>({
     mode: "onChange",
   });
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    setIsSubmitting(true);
+  const onSubmit: SubmitHandler<TUser> = async (data) => {
+    const result = await dispatch(createUserThunk(data));
+    const resultAction = result.payload;
+    console.log("register", resultAction);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    console.log("Form submitted:", data);
-    alert("Registration successful!");
-    reset();
-    setIsSubmitting(false);
+    if (resultAction.success) {
+      alert(resultAction.message);
+      reset();
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+    } else {
+      console.error("Registration failed:", resultAction.payload);
+    }
   };
 
   return (
@@ -234,4 +236,4 @@ const RegistrationForm: React.FC = () => {
   );
 };
 
-export default RegistrationForm;
+export default Registration;

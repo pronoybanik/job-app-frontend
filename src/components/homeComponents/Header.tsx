@@ -1,4 +1,3 @@
-import React from "react";
 import { Search, MapPin, Briefcase } from "lucide-react";
 
 const Header = () => {

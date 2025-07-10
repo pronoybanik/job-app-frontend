@@ -1,10 +1,11 @@
 import  { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
-import { fetchJobs } from "../../redux/features/auth/auth.slice";
+import { fetchJobs } from "../../redux/features/job/job.slice";
+import { useAppDispatch } from "../../redux/hook";
 
 const Jobs = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { jobs, loading, error } = useSelector(
     (state: RootState) => state.jobs
   );

@@ -1,4 +1,3 @@
-import React from "react";
 import Header from "../../components/homeComponents/Header";
 import FeaturedJobs from "../../components/homeComponents/FeaturedJob";
 import JobCategories from "../../components/homeComponents/JobCategories";

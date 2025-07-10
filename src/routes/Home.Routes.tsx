@@ -16,7 +16,7 @@ export const NavbarPath = [
     element: <About />,
   },
   {
-    name: "Jobs",
+    name: "Find Jobs",
     path: "/jobs",
     element: <Jobs />,
   },

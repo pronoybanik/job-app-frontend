@@ -1,36 +1,44 @@
-import React from 'react';
-import { useForm, type SubmitHandler,  } from 'react-hook-form';
-import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
-interface LoginFormData {
-  email: string;
-  password: string;
-}
+import React from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import type { TUser } from "../../types/user.type";
+import { loginUserThunk, setUser } from "../../redux/features/auth/auth.slice";
+import { useAppDispatch } from "../../redux/hook";
+import verifyToken from "../../utils/verifyToken";
+import { toast } from "sonner";
 
 const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset
-  } = useForm<LoginFormData>({
-    mode: 'onChange'
+    reset,
+  } = useForm<TUser>({
+    mode: "onChange",
   });
 
-  const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
-    setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    console.log('Login attempted:', data);
-    alert('Login successful!');
-    reset();
-    setIsSubmitting(false);
+  const onSubmit: SubmitHandler<TUser> = async (data) => {
+    const result = await dispatch(loginUserThunk(data));
+    const resultAction = result.payload;
+    console.log("login", resultAction);
+
+    if (resultAction.success) {
+      const user = verifyToken(resultAction.data.accessToken) as TUser;
+      dispatch(setUser({ user, token: resultAction.data.accessToken }));
+      localStorage.setItem("accessToken", resultAction.data.accessToken);
+      reset();
+      // toast.success("Logged in successfully", { id: toastId });
+      toast.success("Logged in successfully");
+      navigate(`/`);
+    } else {
+      console.error("Registration failed:", resultAction.payload);
+    }
   };
 
   return (
@@ -60,15 +68,17 @@ const LoginForm: React.FC = () => {
               </div>
               <input
                 type="email"
-                {...register('email', {
-                  required: 'Email is required',
+                {...register("email", {
+                  required: "Email is required",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'Please enter a valid email address'
-                  }
+                    message: "Please enter a valid email address",
+                  },
                 })}
                 className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ${
-                  errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
+                  errors.email
+                    ? "border-red-500 bg-red-50"
+                    : "border-gray-300 hover:border-gray-400"
                 }`}
                 placeholder="Enter your email"
               />
@@ -93,16 +103,18 @@ const LoginForm: React.FC = () => {
                 <Lock className="h-5 w-5 text-gray-400" />
               </div>
               <input
-                type={showPassword ? 'text' : 'password'}
-                {...register('password', {
-                  required: 'Password is required',
+                type={showPassword ? "text" : "password"}
+                {...register("password", {
+                  required: "Password is required",
                   minLength: {
                     value: 6,
-                    message: 'Password must be at least 6 characters'
-                  }
+                    message: "Password must be at least 6 characters",
+                  },
                 })}
                 className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ${
-                  errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
+                  errors.password
+                    ? "border-red-500 bg-red-50"
+                    : "border-gray-300 hover:border-gray-400"
                 }`}
                 placeholder="Enter your password"
               />
@@ -112,7 +124,11 @@ const LoginForm: React.FC = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -134,7 +150,10 @@ const LoginForm: React.FC = () => {
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+              <label
+                htmlFor="remember-me"
+                className="ml-2 block text-sm text-gray-700"
+              >
                 Remember me
               </label>
             </div>
@@ -174,7 +193,9 @@ const LoginForm: React.FC = () => {
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              <span className="px-2 bg-white text-gray-500">
+                Or continue with
+              </span>
             </div>
           </div>
 
@@ -220,8 +241,11 @@ const LoginForm: React.FC = () => {
         {/* Sign Up Link */}
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{' '}
-            <Link to={'/signup'} className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+            Don't have an account?{" "}
+            <Link
+              to={"/signup"}
+              className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+            >
               Sign up for free
             </Link>
           </p>

@@ -1,12 +1,14 @@
+import type { TUser } from "../../../types/user.type";
 import axiosInstance from "../../../utils/axios";
 
-export const getJobs = async () => {
-  const response = await axiosInstance.get("/job");
+export const createUser = async (data: TUser) => {
+  const response = await axiosInstance.post("/users/create-user", data);
   return response.data;
 };
 
-export const postJobs = async (data) => {
-  const response = await axiosInstance.post("/job/create-job", data);
+
+export const loginUser = async (data: TUser) => {
+  const response = await axiosInstance.post("/auth/login", data);
   return response.data;
 };
 

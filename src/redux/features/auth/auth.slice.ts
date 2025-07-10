@@ -1,70 +1,100 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getJobs, postJobs } from "./auth.api";
+import type { RootState } from "../../store";
+import type { TAuthState, TAuthUser, TUser } from "../../../types/user.type";
+import { createUser, loginUser } from "./auth.api";
 
-interface Job {
-  id: number;
-  title: string;
-  description: string;
-  // add more fields as needed
-}
-
-interface JobsState {
-  jobs: Job[];
-  loading: boolean;
-  error: string | null;
-}
-
-const initialState: JobsState = {
-  jobs: [],
+// Initial state
+const initialState: TAuthState = {
+  user: null,
+  token: null,
   loading: false,
   error: null,
 };
 
-export const fetchJobs = createAsyncThunk("jobs/fetchJobs", async () => {
-  const jobs = await getJobs();
-  return jobs;
-});
-export const createJobs = createAsyncThunk("jobs/createJobs", async (data) => {
-  const jobs = await postJobs(data);
-  return jobs;
-});
+// Thunks
+export const createUserThunk = createAsyncThunk(
+  "user/createUser",
+  async (data: TUser, { rejectWithValue }) => {
+    try {
+      const user = await createUser(data);
+      return user;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 
-const jobsSlice = createSlice({
-  name: "jobs",
+export const loginUserThunk = createAsyncThunk(
+  "user/login",
+  async (data: TUser, { rejectWithValue }) => {
+    try {
+      const user = await loginUser(data);
+      return user;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+// Slice
+const authSlice = createSlice({
+  name: "auth",
   initialState,
-  reducers: {},
-
+  reducers: {
+    setUser: (state, action) => {
+      const { user, token } = action.payload;
+      state.user = user;
+      state.token = token;
+      state.error = null;
+    },
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+      state.loading = false;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
-    // fetchJobs
-    builder
-      .addCase(fetchJobs.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchJobs.fulfilled, (state, action) => {
-        state.loading = false;
-        state.jobs = action.payload;
-      })
-      .addCase(fetchJobs.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || "Failed to fetch jobs";
-      });
+    // Create User
+    builder.addCase(createUserThunk.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(createUserThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+    });
+    builder.addCase(createUserThunk.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
 
-    // createJobs
-    builder
-      .addCase(createJobs.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(createJobs.fulfilled, (state, action) => {
-        state.loading = false;
-        state.jobs.push(action.payload);
-      })
-      .addCase(createJobs.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || "Failed to create job";
-      });
+    // Login User
+    builder.addCase(loginUserThunk.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(loginUserThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+    });
+    builder.addCase(loginUserThunk.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
   },
 });
 
-export default jobsSlice.reducer;
+// Actions
+export const { setUser, logout } = authSlice.actions;
+
+// Reducer
+export default authSlice.reducer;
+
+// Selectors
+export const selectCurrentToken = (state: RootState) => state.auth.token;
+export const selectCurrentUser = (state: RootState): TAuthUser | null => state.auth.user;
+export const selectAuthLoading = (state: RootState) => state.auth.loading;
+export const selectAuthError = (state: RootState) => state.auth.error;
