@@ -21,13 +21,14 @@ const Registration: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<TUser> = async (data) => {
+    setIsSubmitting(true);
     const result = await dispatch(createUserThunk(data));
     const resultAction = result.payload;
-    console.log("register", resultAction);
 
     if (resultAction.success) {
       alert(resultAction.message);
       reset();
+      setIsSubmitting(false);
       setTimeout(() => {
         navigate("/login");
       }, 1000);

@@ -1,11 +1,13 @@
-import CreateJob from "../pages/AdminDashboard/createJob";
+import CreateJob from "../pages/AdminDashboard/CreateJob";
+import DashBoard from "../pages/AdminDashboard/DashBoard";
 import JobList from "../pages/AdminDashboard/JobList";
+import UpdateJob from "../pages/AdminDashboard/UpdateJob";
 
 export const AdminPaths = [
   {
     name: "Dashboard",
     path: "/dashboard",
-    element: "Dashboard page",
+    element: <DashBoard />,
   },
   {
     name: "create Job",
@@ -18,6 +20,15 @@ export const AdminPaths = [
     element: (
       //   <ProtectedRoute roles={["admin"]}>
       <JobList />
+      //   </ProtectedRoute>
+    ),
+  },
+  {
+    // name: "Job List",
+    path: `updateJob/:id`,
+    element: (
+      //   <ProtectedRoute roles={["admin"]}>
+      <UpdateJob />
       //   </ProtectedRoute>
     ),
   },

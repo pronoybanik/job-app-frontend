@@ -14,9 +14,9 @@ const Jobs = () => {
       dispatch(fetchJobs());
     }, [dispatch]);
     
-    console.log("jobs", jobs?.data?.length);
+    console.log("jobs", jobs?.length);
     // length
-  return <div>Jobs page {jobs?.data?.length}</div>;
+  return <div>Jobs page {jobs?.length}</div>;
 };
 
 export default Jobs;

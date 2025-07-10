@@ -98,3 +98,4 @@ export const selectCurrentToken = (state: RootState) => state.auth.token;
 export const selectCurrentUser = (state: RootState): TAuthUser | null => state.auth.user;
 export const selectAuthLoading = (state: RootState) => state.auth.loading;
 export const selectAuthError = (state: RootState) => state.auth.error;
+

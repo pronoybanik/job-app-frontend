@@ -1,41 +1,54 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getJobs, postJobs } from "./job.api";
-
-interface Job {
-  id: number;
-  title: string;
-  description: string;
-  // add more fields as needed
-}
+import { deleteJobById, getJobById, getJobs, postJobs, updateJobById } from "./job.api";
+import type { TJobPosting } from "../../../types/job.type";
 
 interface JobsState {
-  jobs: Job[];
+  jobs: TJobPosting[];
+  singleJob: TJobPosting | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: JobsState = {
   jobs: [],
+  singleJob: null,
   loading: false,
   error: null,
 };
 
 export const fetchJobs = createAsyncThunk("jobs/fetchJobs", async () => {
   const jobs = await getJobs();
-  return jobs;
+  return jobs.data;
 });
-export const createJobs = createAsyncThunk("jobs/createJobs", async (data) => {
-  const jobs = await postJobs(data);
-  return jobs;
+
+export const createJobs = createAsyncThunk("jobs/createJobs", async (data: TJobPosting) => {
+  const job = await postJobs(data);
+  return job;
+});
+
+export const getSingleJob = createAsyncThunk("jobs/getById", async ({ id }: { id: string }) => {
+  const job = await getJobById(id);
+  return job.data;
+});
+
+export const updateJob = createAsyncThunk(
+  "jobs/updateJob",
+  async ({ id, data }: { id: string; data: Partial<TJobPosting> }) => {
+    const job = await updateJobById(id, data);
+    return job;
+  }
+);
+
+export const deleteJob = createAsyncThunk("jobs/deleteJob", async (id: string) => {
+  await deleteJobById(id);
+  return id;
 });
 
 const jobsSlice = createSlice({
   name: "jobs",
   initialState,
   reducers: {},
-
   extraReducers: (builder) => {
-    // fetchJobs
     builder
       .addCase(fetchJobs.pending, (state) => {
         state.loading = true;
@@ -48,10 +61,8 @@ const jobsSlice = createSlice({
       .addCase(fetchJobs.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to fetch jobs";
-      });
+      })
 
-    // createJobs
-    builder
       .addCase(createJobs.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -63,6 +74,49 @@ const jobsSlice = createSlice({
       .addCase(createJobs.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to create job";
+      })
+
+      .addCase(getSingleJob.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.singleJob = null;
+      })
+      .addCase(getSingleJob.fulfilled, (state, action) => {
+        state.loading = false;
+        state.singleJob = action.payload;
+      })
+      .addCase(getSingleJob.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to load job";
+      })
+
+      .addCase(updateJob.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateJob.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.jobs.findIndex((job) => job._id === action.payload._id);
+        if (index !== -1) {
+          state.jobs[index] = action.payload;
+        }
+      })
+      .addCase(updateJob.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to update job";
+      })
+
+      .addCase(deleteJob.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteJob.fulfilled, (state, action) => {
+        state.loading = false;
+        state.jobs = state.jobs.filter((job) => job._id !== action.payload);
+      })
+      .addCase(deleteJob.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to delete job";
       });
   },
 });

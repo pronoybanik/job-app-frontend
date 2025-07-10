@@ -1,47 +1,36 @@
-import React from "react";
-
-interface Job {
-  id: string;
-  company: string;
-  position: string;
-  contractType: "Full-time" | "Part-time";
-  location: string;
-}
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../redux/hook";
+import { deleteJob, fetchJobs } from "../../redux/features/job/job.slice";
+import type { TJobPosting } from "../../types/job.type";
+import { Link } from "react-router-dom";
 
 const JobList = () => {
-  const [jobs, setJobs] = React.useState<Job[]>([
-    {
-      id: "1",
-      company: "TechCorp",
-      position: "Frontend Developer",
-      contractType: "Full-time",
-      location: "San Francisco, CA",
-    },
-    {
-      id: "2",
-      company: "DesignStudio",
-      position: "UX Designer",
-      contractType: "Part-time",
-      location: "Remote",
-    },
-    {
-      id: "3",
-      company: "DataSystems",
-      position: "Data Scientist",
-      contractType: "Full-time",
-      location: "New York, NY",
-    },
-  ]);
+  const dispatch = useAppDispatch();
+  const { jobs, loading, error } = useAppSelector((state) => state.jobs);
+
+  useEffect(() => {
+    dispatch(fetchJobs());
+  }, [dispatch]);
 
   const handleDelete = (id: string) => {
-    setJobs(jobs.filter((job) => job.id !== id));
+    dispatch(deleteJob(id));
   };
 
-  const handleEdit = (id: string) => {
-    // In a real app, this would open a modal or navigate to edit page
-    console.log("Editing job with id:", id);
-    alert(`Edit job with id: ${id}`);
-  };
+  if (loading) {
+    return (
+      <div className="text-center py-16">
+        <p className="text-gray-500">Loading jobs...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-16">
+        <p className="text-red-500">Error loading jobs: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <section className="p-4">
@@ -49,43 +38,28 @@ const JobList = () => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Company
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Position
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Contract Type
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Location
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
                 Actions
               </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {jobs.map((job) => (
-              <tr key={job.id} className="hover:bg-gray-50">
+            {jobs?.map((job: TJobPosting) => (
+              <tr key={job._id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {job.company}
+                  {job.companyName}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {job.position}
@@ -93,7 +67,7 @@ const JobList = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <span
                     className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      job.contractType === "Full-time"
+                      job.contractType === "full-time"
                         ? "bg-green-100 text-green-800"
                         : "bg-blue-100 text-blue-800"
                     }`}
@@ -105,14 +79,14 @@ const JobList = () => {
                   {job.location}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button
-                    onClick={() => handleEdit(job.id)}
+                  <Link
+                    to={`/dashboard/updateJob/${job._id}`}
                     className="text-blue-600 hover:text-blue-900 mr-3"
                   >
                     Edit
-                  </button>
+                  </Link>
                   <button
-                    onClick={() => handleDelete(job.id)}
+                    onClick={() => handleDelete(job._id)}
                     className="text-red-600 hover:text-red-900"
                   >
                     Delete
