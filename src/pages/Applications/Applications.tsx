@@ -14,13 +14,12 @@ import type { IJobApplication } from "../../types/apply.type";
 
 const Applications = () => {
   const dispatch = useAppDispatch();
-  const { applications, loading, error } = useAppSelector(
+  const { applications, loading } = useAppSelector(
     (state) => state.apply
   );
+  console.log("Applications data:", applications);
+  
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
-  const [filterContract, setFilterContract] = useState("");
   const [selectedApp, setSelectedApp] = useState<IJobApplication | null>(null);
 
   useEffect(() => {
@@ -63,77 +62,26 @@ const Applications = () => {
     }
   };
 
-  const filteredApplications = (
-    applications as unknown as IJobApplication[]
-  )?.filter((app) => {
-    const matchesSearch =
-      app.jobId?.companyName
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      app.jobId?.position?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.userId?.fullName?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesStatus =
-      filterStatus === "" || app.userId?.status === filterStatus;
-    const matchesContract =
-      filterContract === "" || app.jobId?.contractType === filterContract;
-
-    return matchesSearch && matchesStatus && matchesContract;
-  });
-
   if (loading) {
     return <div className="text-center mt-10">Loading...</div>;
   }
 
-  if (error) {
-    return <div className="text-center mt-10 text-red-500">Error: {error}</div>;
-  }
+  const applicationList = applications as unknown as IJobApplication[];
 
   return (
     <div className="p-6 max-w-7xl mx-auto mt-12">
-      <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <h1 className="text-2xl font-semibold text-gray-800">
-          Job Applications
-        </h1>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="border border-gray-300 rounded-md px-4 py-2 w-full md:w-64"
-          />
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="border border-gray-300 rounded-md px-4 py-2"
-          >
-            <option value="">All Status</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
-            <option value="rejected">Rejected</option>
-          </select>
-          <select
-            value={filterContract}
-            onChange={(e) => setFilterContract(e.target.value)}
-            className="border border-gray-300 rounded-md px-4 py-2"
-          >
-            <option value="">All Contract Types</option>
-            <option value="full-time">Full Time</option>
-            <option value="part-time">Part Time</option>
-            <option value="contract">Contract</option>
-          </select>
-        </div>
-      </div>
+      <h1 className="text-2xl font-semibold text-gray-800 mb-6">
+        Job Applications
+      </h1>
 
-      {filteredApplications.length === 0 ? (
+      {applicationList.length === 0 ? (
         <div className="text-center mt-20">
           <Briefcase className="mx-auto text-gray-400 mb-2" size={40} />
           <p className="text-gray-600">No applications found</p>
         </div>
       ) : (
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-20">
-          {filteredApplications.map((application) => (
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-10">
+          {applicationList.map((application) => (
             <div
               key={application._id}
               className="border border-gray-200 rounded-lg p-5 shadow-sm bg-white"
@@ -192,17 +140,13 @@ const Applications = () => {
                   <Eye className="inline w-4 h-4 mr-1" />
                   View
                 </button>
-                {/* <button className="w-full py-2 text-sm text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
-                  <Trash2 className="inline w-4 h-4 mr-1" />
-                  Delete
-                </button> */}
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Modal (optional display) */}
+      {/* Modal */}
       {selectedApp && (
         <div className="fixed inset-0 dark:bg-gray-950 bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-xl w-full">
