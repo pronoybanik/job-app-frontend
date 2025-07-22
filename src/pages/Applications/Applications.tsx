@@ -13,12 +13,12 @@ import {
 import type { IJobApplication } from "../../types/apply.type";
 
 const Applications = () => {
+  // const userInfo = useAppSelector(selectCurrentUser);
+  // console.log("Token:", userInfo);
+
   const dispatch = useAppDispatch();
-  const { applications, loading } = useAppSelector(
-    (state) => state.apply
-  );
+  const { applications, loading } = useAppSelector((state) => state.apply);
   console.log("Applications data:", applications);
-  
 
   const [selectedApp, setSelectedApp] = useState<IJobApplication | null>(null);
 
@@ -68,6 +68,12 @@ const Applications = () => {
 
   const applicationList = applications as unknown as IJobApplication[];
 
+  // const applicationList = (applications as IJobApplication[]).filter(
+  //   (app) => app.userId._id === userInfo?.userId
+  // );
+
+  console.log("Filtered Applications:", applicationList);
+
   return (
     <div className="p-6 max-w-7xl mx-auto mt-12">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">
@@ -83,52 +89,52 @@ const Applications = () => {
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-10">
           {applicationList.map((application) => (
             <div
-              key={application._id}
+              key={application?._id}
               className="border border-gray-200 rounded-lg p-5 shadow-sm bg-white"
             >
               <div className="mb-3">
                 <h2 className="text-lg font-semibold">
-                  {application.jobId.position}
+                  {application?.jobId?.position}
                 </h2>
                 <p className="text-sm text-gray-600 flex items-center">
                   <Building2 className="w-4 h-4 mr-1" />
-                  {application.jobId.companyName}
+                  {application?.jobId?.companyName}
                 </p>
               </div>
 
               <div className="flex flex-col gap-2 text-sm text-gray-700">
                 <p className="flex items-center">
                   <MapPin className="w-4 h-4 mr-1" />
-                  {application.jobId.location}
+                  {application?.jobId?.location}
                 </p>
                 <p className="flex items-center">
                   <User className="w-4 h-4 mr-1" />
-                  {application.userId.fullName}
+                  {application?.userId?.fullName}
                 </p>
                 <p className="flex items-center">
                   <Mail className="w-4 h-4 mr-1" />
-                  {application.userId.email}
+                  {application?.userId?.email}
                 </p>
                 <p className="flex items-center">
                   <Calendar className="w-4 h-4 mr-1" />
-                  {formatDate(application.appliedAt)}
+                  {formatDate(application?.appliedAt)}
                 </p>
               </div>
 
               <div className="mt-4 flex justify-between items-center text-xs">
                 <span
                   className={`px-2 py-1 rounded-full ${getStatusColor(
-                    application.userId.status
+                    application?.userId?.status
                   )}`}
                 >
-                  {application.userId.status}
+                  {application?.userId?.status}
                 </span>
                 <span
                   className={`px-2 py-1 rounded-full ${getContractColor(
-                    application.jobId.contractType
+                    application?.jobId?.contractType
                   )}`}
                 >
-                  {application.jobId.contractType}
+                  {application?.jobId?.contractType}
                 </span>
               </div>
 
@@ -160,20 +166,20 @@ const Applications = () => {
               </button>
             </div>
             <p>
-              <strong>Position:</strong> {selectedApp.jobId.position}
+              <strong>Position:</strong> {selectedApp?.jobId?.position}
             </p>
             <p>
-              <strong>Company:</strong> {selectedApp.jobId.companyName}
+              <strong>Company:</strong> {selectedApp?.jobId?.companyName}
             </p>
             <p>
-              <strong>Applicant:</strong> {selectedApp.userId.fullName} (
-              {selectedApp.userId.email})
+              <strong>Applicant:</strong> {selectedApp?.userId?.fullName} (
+              {selectedApp?.userId?.email})
             </p>
             <p>
-              <strong>Status:</strong> {selectedApp.userId.status}
+              <strong>Status:</strong> {selectedApp?.userId?.status}
             </p>
             <p>
-              <strong>Applied:</strong> {formatDate(selectedApp.appliedAt)}
+              <strong>Applied:</strong> {formatDate(selectedApp?.appliedAt)}
             </p>
           </div>
         </div>
