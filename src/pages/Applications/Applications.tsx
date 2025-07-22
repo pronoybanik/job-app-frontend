@@ -18,8 +18,6 @@ const Applications = () => {
 
   const dispatch = useAppDispatch();
   const { applications, loading } = useAppSelector((state) => state.apply);
-  console.log("Applications data:", applications);
-
   const [selectedApp, setSelectedApp] = useState<IJobApplication | null>(null);
 
   useEffect(() => {
